@@ -1,0 +1,2 @@
+# spellingbee
+Collaborative spelling bee
