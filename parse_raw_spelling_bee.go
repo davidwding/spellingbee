@@ -1,10 +1,38 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
 	"os"
 	"strings"
 )
+
+type spellingBee struct {
+	ExpirationUnix int      `json:"expiration"`
+	DisplayWeekday string   `json:"displayWeekday"`
+	DisplayDate    string   `json:"displayDate"`
+	PrintDate      string   `json:"printDate"`
+	CenterLetter   string   `json:"centerLetter"`
+	OuterLetters   []string `json:"outerLetters"`
+	ValidLetters   []string `json:"validLetters"`
+	Pangrams       []string `json:"pangrams"`
+	Answers        []string `json:"answers"`
+	ID             int      `json:"id"`
+	FreeExpiration int      `json:"freeExpiration"`
+	Editor         string   `json:"editor"`
+}
+
+type pastSpellingBees struct {
+	Today     spellingBee   `json:"today"`
+	Yesterday spellingBee   `json:"yesterday"`
+	ThisWeek  []spellingBee `json:"thisWeek"`
+}
+
+type spellingBeeHistory struct {
+	Today       spellingBee      `json:"today"`
+	Yesterday   spellingBee      `json:"yesterday"`
+	PastPuzzles pastSpellingBees `json:"pastPuzzles"`
+}
 
 func main() {
 	latestSpellingBeeFile, err := getLatestSpellingBeeFile()
@@ -19,8 +47,13 @@ func main() {
 		return
 	}
 
-	spellingBees := extractSpellingBees(string(fileContents))
-	_ = spellingBees
+	spellingBeeHistory, err := extractSpellingBees(string(fileContents))
+	if err != nil {
+		fmt.Println(err)
+		return
+	}
+
+	fmt.Printf("%#v\n", spellingBeeHistory.Today)
 
 	return
 }
@@ -42,7 +75,7 @@ func getLatestSpellingBeeFile() (string, error) {
 	return latestFile, nil
 }
 
-func extractSpellingBees(fileContents string) string {
+func extractSpellingBees(fileContents string) (spellingBeeHistory, error) {
 	windowGameData := fileContents[strings.Index(fileContents, "window.gameData"):]
 	gameDataAndSuffix := windowGameData[strings.Index(windowGameData, "{"):]
 
@@ -62,8 +95,9 @@ func extractSpellingBees(fileContents string) string {
 	}
 
 	gameData := gameDataAndSuffix[:endIndex]
-
-	fmt.Println(gameData)
-
-	return ""
+	spellingBeeHistory := spellingBeeHistory{}
+	if err := json.Unmarshal([]byte(gameData), &spellingBeeHistory); err != nil {
+		return spellingBeeHistory, err
+	}
+	return spellingBeeHistory, nil
 }
