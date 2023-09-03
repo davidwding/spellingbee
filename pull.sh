@@ -5,14 +5,11 @@
 # Further modified by David to download from Spelling Bee API
 
 read NYT_USERNAME NYT_PASSWORD < ~/nyt_creds.txt
-echo $NYT_USERNAME
-echo $NYT_PASSWORD
 
 # Remove cookies 
 rm -f cookies.txt
 
-# Create today's date string in NYT expected format
-DATE=$(date +%b%d%y)
+DATE=$(date +%F)
 
 # Parse out the CSRF auth token
 AUTH_TOKEN=$(curl -c cookies.txt -b cookies.txt "https://myaccount.nytimes.com/auth/enter-email?response_type=cookie&client_id=lgcl&redirect_uri=https%3A%2F%2Fwww.nytimes.com" 2>&1 | grep -oP '(?<=authToken&quot;:&quot;).*?(?=&quot;)')
@@ -29,4 +26,4 @@ curl -c cookies.txt -b cookies.txt -X POST -d '{"username":"'$NYT_USERNAME'","au
 # Download the Spelling Bee data and write it to spelling_bee_$DATE.json
 # curl -b cookies.txt -s "https://www.nytimes.com/svc/games/state/spelling_bee/latest" -o spelling_bee_$DATE.json
 
-curl -b cookies.txt -s "https://www.nytimes.com/puzzles/spelling-bee" -o spelling_bee_$DATE.txt
+curl -b cookies.txt -s "https://www.nytimes.com/puzzles/spelling-bee" -o raw_spelling_bee_$DATE.txt
