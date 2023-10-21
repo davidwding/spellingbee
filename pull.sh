@@ -26,4 +26,4 @@ curl -c cookies.txt -b cookies.txt -X POST -d '{"username":"'$NYT_USERNAME'","au
 # Download the Spelling Bee data and write it to spelling_bee_$DATE.json
 # curl -b cookies.txt -s "https://www.nytimes.com/svc/games/state/spelling_bee/latest" -o spelling_bee_$DATE.json
 
-curl -b cookies.txt -s "https://www.nytimes.com/puzzles/spelling-bee" -o raw_spelling_bee_$DATE.txt
+curl -b cookies.txt -s "https://www.nytimes.com/puzzles/spelling-bee" -o ./spellingbee/raw_spelling_bees/raw_spelling_bee_$DATE.txt

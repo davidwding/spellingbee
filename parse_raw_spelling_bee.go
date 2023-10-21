@@ -59,20 +59,20 @@ func main() {
 }
 
 func getLatestSpellingBeeFile() (string, error) {
-	files, err := os.ReadDir(".")
+	files, err := os.ReadDir("./raw_spelling_bees")
 	if err != nil {
 		return "", err
 	}
 	latestFile := ""
 	for _, file := range files {
-		if !strings.HasPrefix(file.Name(), "raw_spelling_bee") {
-			continue
-		}
+		// if !strings.HasPrefix(file.Name(), "raw_spelling_bee") {
+		// 	continue
+		// }
 		if file.Name() > latestFile {
 			latestFile = file.Name()
 		}
 	}
-	return latestFile, nil
+	return "raw_spelling_bees/" + latestFile, nil
 }
 
 func extractSpellingBees(fileContents string) (spellingBeeHistory, error) {
